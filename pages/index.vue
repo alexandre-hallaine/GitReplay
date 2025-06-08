@@ -4,7 +4,7 @@ const session = authClient.useSession()
 
 <template>
   <UPageSection
-    title="GitReplay"
+    title="Start exploring"
     description="Explore deep GitHub insights — no login required."
     orientation="horizontal"
   >

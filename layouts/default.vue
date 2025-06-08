@@ -11,7 +11,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 
 <template>
   <div>
-    <UHeader>
+    <UHeader title="GitReplay">
       <UNavigationMenu :items="items" />
 
       <template #right>
