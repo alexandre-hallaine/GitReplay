@@ -4,6 +4,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2025-05-15',
-  hub: { workers: true },
+  hub: { workers: true, database: true },
   eslint: { config: { stylistic: true } },
 })
