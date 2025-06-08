@@ -17,5 +17,10 @@ export function auth() {
         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       },
     },
+    advanced: {
+      ipAddress: {
+        ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'],
+      },
+    },
   })
 }
