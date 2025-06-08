@@ -3,10 +3,11 @@ on: push
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      name: production
       url: ${{ steps.deploy.outputs.deployment-url }}
     permissions:
       contents: read
