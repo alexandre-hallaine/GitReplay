@@ -23,7 +23,7 @@
   },
   "packageManager": "pnpm@10.12.1",
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.46",
+    "@iconify-json/lucide": "^1.2.51",
     "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.3",
     "wrangler": "^4.19.1"
