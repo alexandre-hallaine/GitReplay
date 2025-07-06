@@ -2,10 +2,10 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const items = computed<NavigationMenuItem[]>(() => [
-  {
-    label: 'Me',
-    to: '/me',
-  },
+  // {
+  //   label: 'Me',
+  //   to: '/me',
+  // },
 ])
 </script>
 
