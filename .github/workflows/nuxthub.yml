@@ -3,12 +3,8 @@ on: push
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main'
     name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: ${{ steps.deploy.outputs.deployment-url }}
     permissions:
       contents: read
       id-token: write
@@ -31,13 +27,7 @@ jobs:
       - name: Ensure NuxtHub module is installed
         run: pnpx nuxthub@latest ensure
 
-      - name: Build application
-        run: pnpm build
-        env:
-          NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
-
-      - name: Deploy to NuxtHub
-        uses: nuxt-hub/action@v1
-        id: deploy
+      - name: Build & Deploy to NuxtHub
+        uses: nuxt-hub/action@v2
         with:
-          project-key: git-replay-2reb
+          project-key: git-replay-0iu9
