@@ -1,14 +1,17 @@
-import { ghStorage } from '~/server/utils/github'
-
 export default defineEventHandler(async () => {
-  const dates = (await ghStorage.getKeys()).map(d => d.replace(/\.json$/, ''))
-  const keys = new Set(await hubKV().getKeys())
+  const keys = await hubKV().getKeys()
+  const rawDates = await ghStorage.getKeys()
+  const dates = rawDates.map(date => date.replace(/\.json$/, ''))
 
-  return await Promise.all(dates.map(async (date) => {
-    if (keys.has(date))
-      return await hubKV().getItem(date)
-    const item = await ghStorage.getItem(date + '.json')
-    await hubKV().setItem(date, item)
-    return item
-  }))
+  const knownKeys = new Set(keys)
+  const existing = dates.filter(k => knownKeys.has(k))
+  const missing = dates.filter(k => !knownKeys.has(k))
+
+  const items = await getKVItems(existing)
+  const newItemsRaw = await ghStorage.getItems(missing.map(key => key + '.json'))
+
+  const newItems = newItemsRaw.map(({ key, value }) => ({ key: key.replace(/\.json$/, ''), value }))
+  await setKVItems(newItems)
+
+  return [...items, ...newItems]
 })
