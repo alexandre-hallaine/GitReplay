@@ -21,7 +21,7 @@
   },
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.55",
+    "@iconify-json/lucide": "^1.2.56",
     "typescript": "^5.8.3",
     "wrangler": "^4.23.0"
   }
