@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const result: { [key: string]: StorageValue } = {}
 
   const current = new Date(start.getUTCFullYear(), start.getUTCMonth(), 1)
-  while (current <= end) {
+  while (current < end) {
     result[current.toISOString().slice(0, 7)] = await getMonthStats(event, current)
     current.setMonth(current.getMonth() + 1)
   }
