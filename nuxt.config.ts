@@ -6,6 +6,6 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2025-05-15',
   nitro: { experimental: { openAPI: true } },
-  hub: { workers: true, kv: true },
+  hub: { workers: true, kv: true, cache: true },
   eslint: { config: { stylistic: true } },
 })

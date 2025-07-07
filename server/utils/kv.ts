@@ -1,5 +1,7 @@
+import type { StorageValue } from 'unstorage'
+
 export async function getKVItems(keys: string[]) {
-  const results: { key: string, value: unknown }[] = []
+  const results: { key: string, value: StorageValue }[] = []
   const missing: string[] = []
 
   const current = await Promise.allSettled(
@@ -22,8 +24,8 @@ export async function getKVItems(keys: string[]) {
   return results
 }
 
-export async function setKVItems(items: { key: string, value: unknown }[]) {
-  const failed: { key: string, value: unknown }[] = []
+export async function setKVItems(items: { key: string, value: StorageValue }[]) {
+  const failed: { key: string, value: StorageValue }[] = []
 
   const current = await Promise.allSettled(
     items.map(({ key, value }) => hubKV().setItem(key, value)),
