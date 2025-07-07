@@ -1,42 +1,29 @@
-import type { StorageValue } from 'unstorage'
+import type { H3Event } from 'h3'
 
-const getStats = defineCachedFunction(async () => {
-  const keys = await hubKV().getKeys()
+async function getStats(start: Date, end: Date) {
   const rawDates = await ghStorage.getKeys()
   const dates = rawDates.map(date => date.replace(/\.json$/, ''))
 
-  const knownKeys = new Set(keys)
-  const existing = dates.filter(k => knownKeys.has(k))
-  const missing = dates.filter(k => !knownKeys.has(k))
+  const toFetch = dates.filter((str) => {
+    const date = new Date(str)
+    return date >= start && date <= end
+  })
 
-  const items = await getKVItems(existing)
-  const newItemsRaw = await ghStorage.getItems(missing.map(key => key + '.json'))
+  const itemsRaw = await ghStorage.getItems(toFetch.map(key => key + '.json'))
+  const items = itemsRaw.map(({ key, value }) => ({ key: key.replace(/\.json$/, ''), value }))
 
-  const newItems = newItemsRaw.map(({ key, value }) => ({ key: key.replace(/\.json$/, ''), value }))
-  await setKVItems(newItems)
+  let result = {}
+  for (const { value: item } of items)
+    result = defuSum(item, result)
+  return result
+}
 
-  return [...items, ...newItems]
+export const getMonthStats = defineCachedFunction(async (event: H3Event, date: Date) => {
+  const next = new Date(date)
+  next.setMonth(date.getMonth() + 1)
+  return await getStats(date, next)
 }, {
   maxAge: 60 * 60 * 24,
-})
-
-export const getMonthStats = defineCachedFunction(async () => {
-  const days = await getStats()
-  const monthsMap = new Map<string, StorageValue>()
-
-  for (const day of days) {
-    const monthKey = day.key.slice(0, 7)
-
-    if (monthsMap.has(monthKey)) {
-      const prev = monthsMap.get(monthKey)!
-      monthsMap.set(monthKey, defuSum(day.value, prev))
-    }
-    else {
-      monthsMap.set(monthKey, day.value)
-    }
-  }
-
-  return Array.from(monthsMap.entries()).map(([key, value]) => ({ key, value }))
-}, {
-  maxAge: 60 * 60 * 24,
+  name: 'getMonthStats',
+  getKey: (event, date) => date.toISOString().slice(0, 7),
 })
