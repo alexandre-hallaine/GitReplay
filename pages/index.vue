@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import {VisXYContainer, VisLine, VisBulletLegend, VisAxis} from '@unovis/vue'
-
 interface Stats {
-  key: string
   events: { [key: string]: number }
   hours: { [key: string]: number }
   languages: { [key: string]: number }
@@ -10,19 +7,26 @@ interface Stats {
 
 const { data: stats } = await useFetch<{ [key: string]: Stats }>('/api/stats')
 
-const languages = computed(() => {
-  const dates = Object.keys(stats.value!)
+const data = Object.fromEntries(
+  Object.entries(stats.value || {})
+    .map(([key, value]) => [
+      new Date(key).getTime(),
+      value.languages,
+    ])
+    .filter(([_, value]) => value),
+)
+
+const keys = computed(() => {
+  if (stats.value == null) return []
+
+  const dates = Object.keys(stats.value)
   const date = dates.sort()[dates.length - 1]
-  const { languages } = stats.value![date]
+  const { languages } = stats.value[date]
+
   return Object.entries(languages)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5).map(([lang]) => lang)
+    .slice(0, 6).map(([lang]) => lang)
 })
-
-const data = computed(() => Object.keys(stats.value!).map(key => ({ ...stats.value![key], key })))
-
-const x = (s: Stats) => new Date(s.key).getTime()
-const y = languages.value.map(language => s => s.languages?.[language])
 </script>
 
 <template>
@@ -30,18 +34,11 @@ const y = languages.value.map(language => s => s.languages?.[language])
     title="Start exploring"
     description="Explore deep GitHub insights — no login required."
   >
-    <VisBulletLegend :items="languages.map(value => ({name: value}))" />
-    <VisXYContainer :data>
-      <VisLine
-        :x
-        :y
+    <UCard>
+      <StackedArea
+        :keys
+        :data
       />
-      <VisAxis
-        type="x"
-        label="Date"
-        :tick-format="(value) => Intl.DateTimeFormat().format(value)"
-      />
-    </VisXYContainer>
-    <pre>{{ data }}</pre>
+    </UCard>
   </UPageSection>
 </template>

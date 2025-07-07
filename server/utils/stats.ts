@@ -10,7 +10,7 @@ async function getStats(start: Date, end: Date) {
   })
 
   const items = await ghStorage.getItems<object>(toFetch.map(key => key + '.json'))
-  return items.reduce((acc, { value }) => defuSum(value, acc), {}) as EventStats
+  return items.reduce((acc, { value }) => defuSum(value, acc), {}) as object
 }
 
 export const getMonthStats = defineCachedFunction(async (event: H3Event, date: Date) => {
