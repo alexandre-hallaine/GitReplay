@@ -1,14 +1,18 @@
-import { ghStorage } from '~/server/utils/github'
+export default cachedEventHandler(async (event) => {
+  const result: { [key: string]: object } = {}
 
-export default defineEventHandler(async () => {
-  const dates = (await ghStorage.getKeys()).map(d => d.replace(/\.json$/, ''))
-  const keys = new Set(await hubKV().getKeys())
+  const { start } = await getRange()
+  const current = new Date(start.getUTCFullYear(), start.getUTCMonth(), 1)
+  const end = new Date()
+  end.setUTCDate(0)
 
-  return await Promise.all(dates.map(async (date) => {
-    if (keys.has(date))
-      return await hubKV().getItem(date)
-    const item = await ghStorage.getItem(date + '.json')
-    await hubKV().setItem(date, item)
-    return item
-  }))
+  while (current <= end) {
+    result[current.toISOString().slice(0, 7)] = await getMonthStats(event, current)
+    current.setMonth(current.getMonth() + 1)
+  }
+
+  return result
+}, {
+  maxAge: 60 * 60 * 24,
+  getKey: event => event.path,
 })
