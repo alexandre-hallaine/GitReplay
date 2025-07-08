@@ -3,12 +3,19 @@ import { VisXYContainer, VisArea, VisBulletLegend } from '@unovis/vue'
 
 const { keys, data: info } = defineProps<{
   keys: string[]
-  data: { [key: number]: { [key: string]: number } }
+  data: Record<number, Record<string, number>>
 }>()
 
-const data = computed(() => Object.entries(info))
+const data = computed(() =>
+  Object.entries(info).map(([x, series]) => {
+    const total = keys.reduce((sum, k) => sum + (series[k] || 0), 0)
+    const normalized = Object.fromEntries(keys.map(k => [k, (series[k] || 0) / total]))
+    return [x, normalized]
+  }),
+)
+
 const x = (d: [number]) => d[0]
-const y = keys.map(key => (d: [number, { [key: string]: number }]) => d[1][key] || 0)
+const y = keys.map(k => (d: [number, Record<string, number>]) => d[1][k])
 </script>
 
 <template>
