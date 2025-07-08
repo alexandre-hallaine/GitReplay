@@ -1,5 +1,5 @@
 import { createStorage } from 'unstorage'
-import githubDriver from 'unstorage/drivers/github'
+import githubDriver from '@execrate/unstorage/drivers/github'
 
 export const ghStorage = createStorage({
   driver: githubDriver({

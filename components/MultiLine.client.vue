@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VisXYContainer, VisArea, VisBulletLegend, VisAxis } from '@unovis/vue'
+import { VisXYContainer, VisLine, VisBulletLegend, VisAxis } from '@unovis/vue'
 
 const { data } = defineProps<{ data: [number, Record<string, number>][] }>()
 const keys = computed(() => (data.length ? Object.keys(data[0][1]) : []))
@@ -15,7 +15,7 @@ const y = keys.value.map(k => (d: [number, Record<string, number>]) => d[1][k])
       :items="keys.map(key => ({ name: key }))"
     />
     <VisXYContainer :data>
-      <VisArea
+      <VisLine
         :x
         :y
       />
