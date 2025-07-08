@@ -10,7 +10,10 @@ const y = keys.value.map(k => (d: [number, Record<string, number>]) => d[1][k])
 
 <template>
   <div>
-    <VisBulletLegend :items="keys.map(key => ({ name: key }))" />
+    <VisBulletLegend
+      v-if="keys.length > 1"
+      :items="keys.map(key => ({ name: key }))"
+    />
     <VisXYContainer :data>
       <VisArea
         :x

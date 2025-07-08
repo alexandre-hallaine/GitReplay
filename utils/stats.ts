@@ -15,18 +15,13 @@ export function extract(raw: Record<string, Stats>, key: string) {
 }
 
 export function filter(series: Record<number, Record<string, number>>, limit = 6) {
-  const totals: Record<string, number> = {}
-  for (const data of Object.values(series))
-    for (const [k, v] of Object.entries(data))
-      totals[k] = (totals[k] || 0) + v
-
-  const topKeys = Object.entries(totals)
+  const latest = Math.max(...Object.keys(series).map(Number))
+  const topKeys = Object.entries(series[latest] || {})
     .sort(([, a], [, b]) => b - a)
     .slice(0, limit)
     .map(([k]) => k)
 
   const filtered: Record<number, Record<string, number>> = {}
-
   for (const [ts, data] of Object.entries(series)) {
     const entry: Record<string, number> = {}
     for (const k of topKeys)
