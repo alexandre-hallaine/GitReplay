@@ -1,7 +1,5 @@
-import type { StorageValue } from 'unstorage'
-
-export default defineEventHandler(async (event) => {
-  const result: { [key: string]: StorageValue } = {}
+export default cachedEventHandler(async (event) => {
+  const result: { [key: string]: object } = {}
 
   const { start } = await getRange()
   const current = new Date(start.getUTCFullYear(), start.getUTCMonth(), 1)
@@ -14,4 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   return result
+}, {
+  maxAge: 60 * 60 * 24,
+  getKey: event => event.path,
 })

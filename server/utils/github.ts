@@ -4,7 +4,7 @@ import githubDriver from 'unstorage/drivers/github'
 export const ghStorage = createStorage({
   driver: githubDriver({
     repo: 'alexandre-hallaine/ghstats',
-    branch: 'main',
+    token: process.env.GITHUB_TOKEN,
     dir: '/stats',
   }),
 })
