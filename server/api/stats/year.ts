@@ -1,4 +1,4 @@
-export default cachedEventHandler(async () => {
+export default cachedEventHandler(async (event) => {
   const { start } = await getRange()
   const results: Record<string, object> = {}
 
@@ -9,7 +9,7 @@ export default cachedEventHandler(async () => {
     const yearStart = new Date(year, 0, 1)
     const yearEnd = new Date(year, 11, 31)
 
-    results[year] = await getStats(yearStart, yearEnd)
+    results[year] = await getStats(event, yearStart, yearEnd)
   }
 
   return results
