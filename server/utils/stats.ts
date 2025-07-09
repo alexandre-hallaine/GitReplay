@@ -12,7 +12,7 @@ export const getStats = defineCachedFunction(async (event: H3Event, start: Date,
   const items = await ghStorage.getItems<object>(toFetch.map(key => key + '.json'))
   return items.reduce((acc, { value }) => defuSum(value, acc), {}) as object
 }, {
-  maxAge: 60 * 60 * 24,
+  maxAge: 60 * 60 * 24 * 365, // 1 year
   name: 'getStats',
   getKey: (event: H3Event, start: Date, end: Date) => {
     const formatDate = (date: Date) => date.toISOString().split('T')[0]

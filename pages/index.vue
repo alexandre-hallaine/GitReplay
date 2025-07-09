@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: rawStats } = await useFetch<Record<string, Stats>>('/api/stats/year')
+const { data: rawStats } = await useFetch<Record<string, Stats>>('/api/stats/yearly')
 
 const stats = {
   languages: normalize(filter(extract(rawStats.value!, 'languages'), 6)),

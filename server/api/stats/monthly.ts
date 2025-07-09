@@ -18,6 +18,6 @@ export default cachedEventHandler(async (event) => {
 
   return results
 }, {
-  maxAge: 60 * 60 * 24,
-  getKey: event => event.path,
+  maxAge: 60 * 60 * 24 * 7, // 7 days
+  //  getKey: event => event.path,
 })
