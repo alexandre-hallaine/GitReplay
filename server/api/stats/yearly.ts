@@ -1,18 +1,15 @@
+import { eachYearOfInterval, endOfYear, format, startOfYear } from 'date-fns'
+
 export default cachedEventHandler(async (event) => {
   const { start } = await getRange()
-  const results: Record<string, object> = {}
+  const end = new Date()
 
-  const startYear = start.getFullYear()
-  const currentYear = new Date().getFullYear()
-
-  for (let year = startYear; year < currentYear; year++) {
-    const yearStart = new Date(year, 0, 1)
-    const yearEnd = new Date(year, 11, 31)
-
-    results[year] = await getStats(event, yearStart, yearEnd)
-  }
-
-  return results
+  return Object.fromEntries(await Promise.all(
+    eachYearOfInterval({ start, end }).map(async date => ([
+      format(date, 'yyyy'),
+      await getStats(event, startOfYear(date), endOfYear(date)),
+    ])),
+  ))
 }, {
   maxAge: 60 * 60 * 24 * 365, // 1 year
   getKey: event => event.path,

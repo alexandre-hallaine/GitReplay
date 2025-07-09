@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const modes = ['yearly', 'monthly']
-const mode = ref('yearly')
+const mode = useCookie('mode', { default: () => 'yearly' })
 
 const url = computed(() => `/api/stats/${mode.value}`)
 const { data: rawStats } = await useFetch<Record<string, Stats>>(url, { watch: [url] })

@@ -1,23 +1,16 @@
+import { eachMonthOfInterval, endOfMonth, format, startOfMonth } from 'date-fns'
+
 export default cachedEventHandler(async (event) => {
   const { start } = await getRange()
-  const results: Record<string, object> = {}
+  const end = new Date()
 
-  const startMonth = start.getFullYear() * 12 + start.getMonth()
-  const currentMonth = new Date().getFullYear() * 12 + new Date().getMonth()
-
-  for (let month = startMonth; month < currentMonth; month++) {
-    const year = Math.floor(month / 12)
-    const m = month % 12
-
-    const monthStart = new Date(year, m, 1)
-    const monthEnd = new Date(year, m + 1, 0)
-    const key = `${year}-${String(m + 1).padStart(2, '0')}`
-
-    results[key] = await getStats(event, monthStart, monthEnd)
-  }
-
-  return results
+  return Object.fromEntries(await Promise.all(
+    eachMonthOfInterval({ start, end }).map(async date => ([
+      format(date, 'yyyy-MM'),
+      await getStats(event, startOfMonth(date), endOfMonth(date)),
+    ])),
+  ))
 }, {
-  maxAge: 60 * 60 * 24 * 7, // 7 days
-  //  getKey: event => event.path,
+  maxAge: 60 * 60 * 24 * 31, // 1 month
+  getKey: event => event.path,
 })
