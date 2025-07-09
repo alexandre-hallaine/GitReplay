@@ -1,9 +1,13 @@
 <script setup lang="ts">
-const { data: rawStats } = await useFetch<Record<string, Stats>>('/api/stats/yearly')
+const modes = ['yearly', 'monthly']
+const mode = ref('yearly')
+
+const url = computed(() => `/api/stats/${mode.value}`)
+const { data: rawStats } = await useFetch<Record<string, Stats>>(url, { watch: [url] })
 
 const stats = {
-  languages: normalize(filter(extract(rawStats.value!, 'languages'), 6)),
-  events: filter(extract(rawStats.value!, 'events'), 1),
+  languages: computed(() => normalize(filter(extract(rawStats.value!, 'languages'), 6))),
+  events: computed(() => filter(extract(rawStats.value!, 'events'), 1)),
 }
 </script>
 
@@ -12,11 +16,17 @@ const stats = {
     title="Start exploring"
     description="Explore deep GitHub insights — no login required."
   >
+    <template #links>
+      <USelectMenu
+        v-model="mode"
+        :items="modes"
+      />
+    </template>
     <UPageCard title="Top Languages Over Time">
-      <XYChart :data="Object.entries(stats.languages).map(([k, v]) => [+k, v])" />
+      <XYChart :data="Object.entries(stats.languages.value).map(([k, v]) => [+k, v])" />
     </UPageCard>
     <UPageCard title="Events Breakdown">
-      <XYChart :data="Object.entries(stats.events).map(([k, v]) => [+k, v])" />
+      <XYChart :data="Object.entries(stats.events.value).map(([k, v]) => [+k, v])" />
     </UPageCard>
   </UPageSection>
 </template>
